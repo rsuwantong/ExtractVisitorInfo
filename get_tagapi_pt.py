@@ -1,7 +1,4 @@
 # coding: utf-8
-
-# In[7]:
-
 ####################################################################################
 # Name: get_tagapi_pt
 # Description: Get pantip tags from API
