@@ -5,7 +5,7 @@
 # Input: default.id_syncs
 # Version:
 #   2016/11/11 RS: Initial version
-#   
+#   2016/11/14 RS: Add tapad_id and erase platform to/ from data_txn_pt 
 ####################################################################################
 */
 
@@ -45,43 +45,44 @@ select sight_date, platform, hl_platform, case when ip_number between 18087936 a
 drop table if exists rata_sght.data_txn_pt;
 create table rata_sght.data_txn_pt row format delimited fields terminated by '\t' as ( 
 	
-select i.sight_date, i.platform, i.hl_platform, i.carrier, i.channel, i.device_techname, i.page_type, i.forum, i.tag_num, i.tag1,  i.tag2,  i.tag3, i.tag4, j.tag_name as tag5 from 
+select i.sight_date, i.tapad_id, i.hl_platform, i.carrier, i.channel, i.device_techname, i.page_type, i.forum, i.tag_num, i.tag1,  i.tag2,  i.tag3, i.tag4, j.tag_name as tag5 from 
 (	
-select g.sight_date, g.platform, g.hl_platform, g.carrier, g.channel, g.device_techname, g.page_type, g.forum, g.tag_num, g.tag1,  g.tag2,  g.tag3, h.tag_name as tag4, g.tag5 from 
+select g.sight_date, g.tapad_id, g.hl_platform, g.carrier, g.channel, g.device_techname, g.page_type, g.forum, g.tag_num, g.tag1,  g.tag2,  g.tag3, h.tag_name as tag4, g.tag5 from 
 (	
-select e.sight_date, e.platform, e.hl_platform, e.carrier, e.channel, e.device_techname, e.page_type, e.forum, e.tag_num, e.tag1,  e.tag2, f.tag_name as tag3, e.tag4, e.tag5 from 
+select e.sight_date, e.tapad_id, e.hl_platform, e.carrier, e.channel, e.device_techname, e.page_type, e.forum, e.tag_num, e.tag1,  e.tag2, f.tag_name as tag3, e.tag4, e.tag5 from 
 (	
-select c.sight_date, c.platform, c.hl_platform, c.carrier, c.channel, c.device_techname, c.page_type, c.forum, c.tag_num, c.tag1, d.tag_name as tag2, c.tag3, c.tag4, c.tag5 from 
-(select a.sight_date, a.platform, a.hl_platform, a.carrier, a.channel, a.device_techname, a.page_type, a.forum, a.tag_num, b.tag_name as tag1, a.tag2, a.tag3, a.tag4, a.tag5 from rata_sght.data_txn_pt_pre a left join apollo_util.tagid2tagname_pt b on a.tag1=b.tag_id) c left join apollo_util.tagid2tagname_pt d on c.tag2=d.tag_id) e left join apollo_util.tagid2tagname_pt f on e.tag3=f.tag_id) g left join apollo_util.tagid2tagname_pt h on g.tag4=h.tag_id) i left join apollo_util.tagid2tagname_pt j on i.tag5=j.tag_id)  ;
+select c.sight_date, c.tapad_id, c.hl_platform, c.carrier, c.channel, c.device_techname, c.page_type, c.forum, c.tag_num, c.tag1, d.tag_name as tag2, c.tag3, c.tag4, c.tag5 from 
+(select a.sight_date, a.tapad_id, a.platform, a.hl_platform, a.carrier, a.channel, a.device_techname, a.page_type, a.forum, a.tag_num, b.tag_name as tag1, a.tag2, a.tag3, a.tag4, a.tag5 from rata_sght.data_txn_pt_pre a left join apollo_util.tagid2tagname_pt b on a.tag1=b.tag_id) c left join apollo_util.tagid2tagname_pt d on c.tag2=d.tag_id) e left join apollo_util.tagid2tagname_pt f on e.tag3=f.tag_id) g left join apollo_util.tagid2tagname_pt h on g.tag4=h.tag_id) i left join apollo_util.tagid2tagname_pt j on i.tag5=j.tag_id)  ;
 
 
 /*
 [impala.prd.sg1.tapad.com:21000] > select * from rata_sght.data_txn_pt limit 20;
 Query: select * from rata_sght.data_txn_pt limit 20
-+------------+----------------+-------------+---------+---------+-----------------+-----------+---------------+---------+------------------------------------------+--------------------+-----------------+-------------------+--------------------+
-| sight_date | platform       | hl_platform | carrier | channel | device_techname | page_type | forum         | tag_num | tag1                                     | tag2               | tag3            | tag4              | tag5               |
-+------------+----------------+-------------+---------+---------+-----------------+-----------+---------------+---------+------------------------------------------+--------------------+-----------------+-------------------+--------------------+
-| 2016-11-07 | COMPUTER       | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER        | topic     | tvshow        | 0       | NULL                                     | NULL               | NULL            | NULL              | NULL               |
-| 2016-11-07 | ANDROID        | ANDROID     | DTAC    | Pantip  | r7plusf         | topic     | supachalasai  | 2       | กีฬา                                     | วอลเลย์บอล         | NULL            | NULL              | NULL               |
-| 2016-11-07 | COMPUTER       | PC_OTHERS   | DTAC    | Pantip  | COMPUTER        | topic     | mbk           | 5       | 4G                                       | Mobile Operator    | truemove H      | dtac              | AIS                |
-| 2016-11-07 | COMPUTER       | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER        | topic     | tvshow        | 4       | อัครณัฐ อริยฤทธิ์วิกุล (น๊อต)              | นักแสดง            | สถานีโทรทัศน์   | รายการข่าว         | NULL               |
-| 2016-11-07 | COMPUTER       | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER        | tag       | NULL          | 0       | NULL                                     | NULL               | NULL            | NULL              | NULL               |
-| 2016-11-07 | COMPUTER       | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER        | forum     | cartoon       | 0       | NULL                                     | NULL               | NULL            | NULL              | NULL               |
-| 2016-11-07 | COMPUTER       | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER        | topic     | siliconvalley | 0       | NULL                                     | NULL               | NULL            | NULL              | NULL               |
-| 2016-11-07 | COMPUTER       | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER        | topic     | social        | 2       | ที่ดิน                                    | กฎหมายชาวบ้าน       | NULL            | NULL              | NULL               |
-| 2016-11-07 | COMPUTER       | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER        | topic     | siam          | 5       | The Shock                                | เรื่องเล่าสยองขวัญ   | รายการวิทยุ      | กพล ทองพลับ (ป๋อง) | สิ่งลี้ลับ (mystery) |
-| 2016-11-07 | COMPUTER       | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER        | topic     | food          | 0       | NULL                                     | NULL               | NULL            | NULL              | NULL               |
-| 2016-11-07 | ANDROID        | ANDROID     | Wi-Fi   | Pantip  | htc onem8       | topic     | mbk           | 4       | iPhone                                   | iOS                | โทรศัพท์มือถือ  | สมาร์ทโฟน         | NULL               |
-| 2016-11-07 | WINDOWS_TABLET | ANDROID     | Wi-Fi   | Pantip  | mozilla         | topic     | chalermthai   | 5       | พิธีกรรายการโทรทัศน์                     | นักแสดงไทย         | นักแสดงภาพยนตร์ | นักแสดง           | สังคมชาวพันทิป     |
-| 2016-11-07 | COMPUTER       | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER        | topic     | tvshow        | 4       | Moon Lovers: Scarlet Heart Ryeo (ซีรีส์) | ซีรีส์ฮ่องกง-ไต้หวัน | ซีรีส์จีน       | ซีรีส์เกาหลี      | NULL               |
-| 2016-11-07 | COMPUTER       | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER        | main      | NULL          | 0       | NULL                                     | NULL               | NULL            | NULL              | NULL               |
-| 2016-11-07 | ANDROID        | ANDROID     | AIS     | Pantip  | vivo v3         | NULL      | NULL          | 0       | NULL                                     | NULL               | NULL            | NULL              | NULL               |
-| 2016-11-07 | COMPUTER       | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER        | topic     | silom         | 2       | มนุษย์เงินเดือน                           | งานไอที            | NULL            | NULL              | NULL               |
-| 2016-11-07 | IPAD           | PC_OTHERS   | Wi-Fi   | Pantip  | IPAD            | forum     | cartoon       | 0       | NULL                                     | NULL               | NULL            | NULL              | NULL               |
-| 2016-11-07 | COMPUTER       | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER        | topic     | chalermkrung  | 0       | NULL                                     | NULL               | NULL            | NULL              | NULL               |
-| 2016-11-07 | ANDROID        | ANDROID     | TOT     | Pantip  | sm-n900         | topic     | wahkor        | 5       | สุขภาพกาย                                 | คลับสุขภาพ          | ยา              | เภสัชกร           | ชีววิทยา           |
-| 2016-11-07 | ANDROID        | ANDROID     | Wi-Fi   | Pantip  | asusz008d       | topic     | beauty        | 0       | NULL                                     | NULL               | NULL            | NULL              | NULL               |
-+------------+----------------+-------------+---------+---------+-----------------+-----------+---------------+---------+------------------------------------------+--------------------+-----------------+-------------------+--------------------+
++------------+--------------------------------------+-------------+---------+---------+---------------------+-----------+--------------+---------+------------------+-----------------+-----------------+-----------------+----------------+
+| sight_date | tapad_id                             | hl_platform | carrier | channel | device_techname     | page_type | forum        | tag_num | tag1             | tag2            | tag3            | tag4            | tag5           |
++------------+--------------------------------------+-------------+---------+---------+---------------------+-----------+--------------+---------+------------------+-----------------+-----------------+-----------------+----------------+
+| 2016-11-05 | 89e37fc1-9291-11e6-8b4b-005056a27c72 | ANDROID     | AIS     | Pantip  | lumia 620           | forum     | food         | 0       | NULL             | NULL            | NULL            | NULL            | NULL           |
+| 2016-11-05 | f007d601-48d8-11e6-a6c9-06fe5a06de83 | PC_OTHERS   | Wi-Fi   | Pantip  | IPAD                | topic     | chalermthai  | 0       | NULL             | NULL            | NULL            | NULL            | NULL           |
+| 2016-11-05 | 34d6b781-091c-11e6-af81-0680bb2a2415 | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER            | topic     | beauty       | 0       | NULL             | NULL            | NULL            | NULL            | NULL           |
+| 2016-11-05 | a8cd1e11-a343-11e6-ba34-005056a272df | IPHONE      | Wi-Fi   | Pantip  | iphone os 10        | topic     | bangrak      | 5       | ประสบการณ์ชีวิตคู่ | ปัญหาความรัก    | ความรักวัยรุ่น    | ความรักวัยทำงาน | ปัญหาชีวิต     |
+| 2016-11-05 | db112fe1-456c-11e6-9483-0275b17dc6d7 | ANDROID     | DTAC    | Pantip  | gt-n7100            | topic     | home         | 0       | NULL             | NULL            | NULL            | NULL            | NULL           |
+| 2016-11-05 | 7edb12c1-993d-11e6-8b4b-005056a27c72 | PC_OTHERS   | Wi-Fi   | Pantip  | IPAD                | topic     | supachalasai | 2       | ฟุตบอลต่างประเทศ   | พรีเมียร์ลีก    | NULL            | NULL            | NULL           |
+| 2016-11-05 | c3afec41-a301-11e6-ba34-005056a272df | IPHONE      | DTAC    | Pantip  | iphone os 10        | topic     | bangrak      | 5       | ปัญหาความรัก     | ปัญหาชีวิต      | ความรักวัยทำงาน | ความรักวัยรุ่น    | ปัญหาครอบครัว  |
+| 2016-11-05 | 07d4c1c1-a325-11e6-be06-005056a262f4 | PC_OTHERS   | Wi-Fi   | Pantip  | IPAD                | topic     | blueplanet   | 5       | เที่ยวต่างประเทศ   | ประเทศเกาหลีใต้  | ประเทศญี่ปุ่น      | สนามบิน         | วีซ่า           |
+| 2016-11-05 | bbe1e061-8eeb-11e6-a20f-005056a27a0a | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER            | topic     | bangrak      | 5       | แต่งงาน           | เที่ยวทะเล       | สถานที่จัดเลี้ยง  | ขอแต่งงาน        | เกาะช้าง        |
+| 2016-11-05 | c86a4261-3558-11e6-bf9a-0294e573e689 | PC_OTHERS   | Wi-Fi   | Pantip  | COMPUTER            | topic     | blueplanet   | 0       | NULL             | NULL            | NULL            | NULL            | NULL           |
+| 2016-11-05 | ea36e821-6ac4-11e6-88f9-005056a2566f | ANDROID     | DTAC    | Pantip  | sm-g360h            | topic     | siam         | 0       | NULL             | NULL            | NULL            | NULL            | NULL           |
+| 2016-11-05 | 38811381-a33b-11e6-ba34-005056a272df | IPHONE      | Wi-Fi   | Pantip  | iphone os 10        | topic     | siam         | 0       | NULL             | NULL            | NULL            | NULL            | NULL           |
+| 2016-11-05 | 5a1b1001-a165-11e5-a50e-005056a24e8f | ANDROID     | Wi-Fi   | Pantip  | sm-j700f            | topic     | social       | 5       | ธนาคาร           | คุ้มครองผู้บริโภค   | เตือนภัย        | การเงิน         | ธนาคารกสิกรไทย |
+| 2016-11-05 | 67fd0ea1-560d-11e6-ac0d-02daa3147571 | ANDROID     | Wi-Fi   | Pantip  | sm-a800f            | topic     | bangrak      | 4       | ปัญหาชีวิต       | ความรักวัยทำงาน | ศาลาคนเศร้า      | ปัญหาความรัก    | NULL           |
+| 2016-11-05 | c25c1611-350d-11e5-97da-005056a20bde | ANDROID     | AIS     | Pantip  | sm-a700fd           | topic     | ratchada     | 0       | NULL             | NULL            | NULL            | NULL            | NULL           |
+| 2016-11-05 | 4a49fc21-dbbe-11e5-bc81-0275b17dc6d7 | ANDROID     | Wi-Fi   | Pantip  | gt-n7100            | topic     | food         | 4       | อาหารคาว         | ทำอาหาร         | อาหาร           | อาหารไทย        | NULL           |
+| 2016-11-05 | 5f5e2701-a317-11e6-9983-005056a27c72 | PC_OTHERS   | DTAC    | Pantip  | IPAD                | topic     | klaibann     | 4       | ชีวิตในต่างแดน    | ทำงานต่างประเทศ  | แม่บ้านต่างแดน     | แต่งเรื่องสั้น     | NULL           |
+| 2016-11-05 | 0d544421-94e7-11e4-929d-005056a276c4 | ANDROID     | Wi-Fi   | Pantip  | mobile rv49.0 gecko | topic     | home         | 0       | NULL             | NULL            | NULL            | NULL            | NULL           |
+| 2016-11-05 | ab155291-9caf-11e6-abe6-005056a23433 | IPHONE      | Wi-Fi   | Pantip  | iphone os 10        | topic     | mbk          | 5       | iPhone 7         | สมาร์ทโฟน       | Android         | iOS             | โทรศัพท์มือถือ |
+| 2016-11-05 | 297be841-a356-11e6-8297-005056a26b8c | IPHONE      | AIS     | Pantip  | iphone os 10        | topic     | sinthorn     | 5       | ธนาคาร           | คุ้มครองผู้บริโภค   | เตือนภัย        | การเงิน         | ธนาคารกสิกรไทย |
++------------+--------------------------------------+-------------+---------+---------+---------------------+-----------+--------------+---------+------------------+-----------------+-----------------+-----------------+----------------+
 
- 
+
+
 */
