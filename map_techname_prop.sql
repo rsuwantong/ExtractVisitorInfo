@@ -41,3 +41,24 @@ create table apollo_util.techname_prop_map row format delimited fields terminate
   
   select * from apollo_util.techname_prop_map order by popularity asc limit 20;
   
+  /*
+  +------------------------------------------+------------+-----------------+---------+--------------------+--------------+---------------+---------------+------------+---------+
+| device_techname_raw                      | popularity | device_techname | brand   | device_commercname | release_year | release_month | release_price | screensize | cluster |
++------------------------------------------+------------+-----------------+---------+--------------------+--------------+---------------+---------------+------------+---------+
+| sm-j700k                                 | 1          | sm-j700         | samsung | galaxy j7          | 2015         | June          | 250           | 5.5        | 4       |
+| sm-j700t                                 | 1          | sm-j700         | samsung | galaxy j7          | 2015         | June          | 250           | 5.5        | 4       |
+| sm-j700p                                 | 1          | sm-j700         | samsung | galaxy j7          | 2015         | June          | 250           | 5.5        | 4       |
+| sm-j700t1                                | 1          | sm-j700         | samsung | galaxy j7          | 2015         | June          | 250           | 5.5        | 4       |
+| sm-j700h                                 | 1          | sm-j700         | samsung | galaxy j7          | 2015         | June          | 250           | 5.5        | 4       |
+| sm-j700f u2                              | 1          | sm-j700         | samsung | galaxy j7          | 2015         | June          | 250           | 5.5        | 4       |
+| sm-j7008                                 | 1          | sm-j700         | samsung | galaxy j7          | 2015         | June          | 250           | 5.5        | 4       |
+| sm-j700m                                 | 1          | sm-j700         | samsung | galaxy j7          | 2015         | June          | 250           | 5.5        | 4       |
+| sm-j700                                  | 1          | sm-j700         | samsung | galaxy j7          | 2015         | June          | 250           | 5.5        | 4       |
+| sm-j700f                                 | 1          | sm-j700         | samsung | galaxy j7          | 2015         | June          | 250           | 5.5        | 4       |
+| sm-j200m                                 | 2          | sm-j200         | samsung | galaxy j2          | 2015         | September     | 150           | 4.7        | 10      |
+| sm-j200gu                                | 2          | sm-j200         | samsung | galaxy j2          | 2015         | September     | 150           | 4.7        | 10      |
+| sm-j200g                                 | 2          | sm-j200         | samsung | galaxy j2          | 2015         | September     | 150           | 4.7        | 10      |
+| sm-j200gu u2                             | 2          | sm-j200         | samsung | galaxy j2          | 2015         | September     | 150           | 4.7        | 10      |
+
+  
+  */
