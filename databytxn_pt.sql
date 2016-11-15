@@ -5,7 +5,7 @@
 # Input: default.id_syncs
 # Version:
 #   2016/11/11 RS: Initial version
-#   2016/11/14 RS: Add tapad_id and erase platform to/ from data_txn_pt 
+#   2016/11/14 RS: Add tapad_id and erase platform to/ from data_txn_pt, correct page_type and num_tag 
 ####################################################################################
 */
 
@@ -24,7 +24,6 @@ select sight_date, platform, hl_platform, case when ip_number between 18087936 a
 		when lcase(user_agent) like '%android; mobile; rv%' or lcase(user_agent) like '%mobile rv[0-9][0-9].[0-9] gecko%' then 'unidentified android' 
 		when lcase(user_agent) like '%android; tablet; rv%' or lcase(user_agent) like '%tablet rv[0-9][0-9].[0-9] gecko%' then 'unidentified tablet' 
 		else  regexp_replace(regexp_replace(regexp_replace(trim(regexp_replace(regexp_replace(regexp_replace(regexp_replace(lcase(user_agent),'.*android [0-9](.[0-9](.[0-9])?)?; ',''),' build.*|; android/.*|\\) applewebkit.*|/v[0-9] linux.*|v_td.*|_td/v[0-9].*|i_style.*',''),'.*(th|en|zh|zz)(-|_)(gb|au|ph|th|us|cn|nz|gb|tw|fi|jp|za|sg|ie|zz);? |.*nokia; ',''),'/.*|linux.*','')),'[^0-9a-z\- \.]',''),'.*samsung(-| )|.*lenovo |.*microsoft |.*th- ',''),'like.*|lollipop.*','') end as device_techname, 
-		
 		page_type, case when referrer_url like '%/forum/%' then 		
 				regexp_replace(split_part(regexp_replace(regexp_replace(regexp_replace(referrer_url,'.*forum/',''),'\\?.*',''),'\\&.*',''),'',1),'/.*','')
 			when url like '%ta_cat=group%' then regexp_replace(regexp_replace(url,'.*ta_cat=group%3D',''),'%{1}.*','') end as forum, tag_num, 
@@ -36,7 +35,17 @@ select sight_date, platform, hl_platform, case when ip_number between 18087936 a
 	    case when tag_num between 4 and 5 then regexp_replace(regexp_replace(url,'.*%26C4%3D',''),'%26C5.*','') end as tag4, 
 	    case when tag_num =5 then regexp_replace(url,'.*%26C5%3D','') end as tag5, tapad_id  
 
-	from ( select regexp_replace(cast(cast(a.header.created_at/1000 as timestamp) as string),' .*','') as sight_date, partner_code as channel,case when lower(a.header.platform)='iphone' and (lower(a.header.user_agent) like ('%windows phone%') or lower(a.header.user_agent) like ('%lumia%')) then 'WINDOWS_PHONE' else a.header.platform end as platform, case when a.header.platform in ('ANDROID', 'ANDROID_TABLET', 'WINDOWS_PHONE', 'WINDOWS_TABLET', 'BLACKBERRY', 'FEATURE_PHONE') then 'ANDROID' when a.header.platform='IPHONE' then 'IPHONE' else 'PC_OTHERS' end as hl_platform, cast(split_part(a.header.ip_address,'.',1) as INT)*16777216 + cast(split_part(a.header.ip_address,'.',2) as INT)*65536 + cast(split_part(a.header.ip_address,'.',3) as INT)*256+ cast(split_part(a.header.ip_address,'.',4) as INT) ip_number, b.value as tapad_id, a.header.user_agent as user_agent, a.header.url as url, case when a.header.referrer_url like '%tag%' then regexp_replace(a.header.referrer_url,'(\\(?%E0|à).*','') when a.header.referrer_url like '%topic%' then NULL else a.header.referrer_url end as referrer_url, case when a.header.referrer_url like '%tag%' then 'tag' when a.header.referrer_url like '%forum%' then 'forum' when a.header.referrer_url like '%topic%' then 'topic' when a.header.referrer_url ='http://pantip.com/' or a.header.referrer_url ='http://m.pantip.com/' then 'main' end as page_type, case when (a.header.url like '%ta_cat%' and a.header.url like '%26C%') then cast(regexp_replace(regexp_replace(a.header.url,'.*(%26C)+',''),'%3D.*','') as double) else 0 end as tag_num 
+	from ( select regexp_replace(cast(cast(a.header.created_at/1000 as timestamp) as string),' .*','') as sight_date, partner_code as channel,case when lower(a.header.platform)='iphone' and (lower(a.header.user_agent) like ('%windows phone%') or lower(a.header.user_agent) like ('%lumia%')) then 'WINDOWS_PHONE' else a.header.platform end as platform, case when a.header.platform in ('ANDROID', 'ANDROID_TABLET', 'WINDOWS_PHONE', 'WINDOWS_TABLET', 'BLACKBERRY', 'FEATURE_PHONE') then 'ANDROID' when a.header.platform='IPHONE' then 'IPHONE' else 'PC_OTHERS' end as hl_platform, cast(split_part(a.header.ip_address,'.',1) as INT)*16777216 + cast(split_part(a.header.ip_address,'.',2) as INT)*65536 + cast(split_part(a.header.ip_address,'.',3) as INT)*256+ cast(split_part(a.header.ip_address,'.',4) as INT) ip_number, b.value as tapad_id, a.header.user_agent as user_agent, a.header.url as url, case when a.header.referrer_url like '%tag%' then regexp_replace(a.header.referrer_url,'(\\(?%E0|à).*','') when a.header.referrer_url like '%topic%' then NULL else a.header.referrer_url end as referrer_url, case when a.header.referrer_url like '%pantip.com/tag%' then 'tag' 
+		when a.header.referrer_url like '%pantip.com/forum%' then 'forum' 
+		when a.header.referrer_url like '%pantip.com/topic%' then 'topic' 
+		when (a.header.referrer_url ='http://pantip.com/' or a.header.referrer_url ='http://m.pantip.com/' or a.header.referrer_url like '%pantip.com/home%'
+		or a.header.referrer_url like '%pantip.com/pick%' or a.header.referrer_url like '%pantip.com/trend%' or a.header.referrer_url like '%pantip.com/ourlove%'
+		) then 'home' 
+		when a.header.referrer_url like '%pantip.com/profile/%' then 'profile' 
+		when a.header.referrer_url like '%pantip.com/club%' then 'club' 
+		when a.header.referrer_url like '%pantip.com/register%' then 'register' 
+		when a.header.referrer_url like '%account%' or a.header.referrer_url like '%setting%' or a.header.referrer_url like '%login%' then 'account' 
+		when a.header.referrer_url like '%pantip.com/about%' or a.header.referrer_url like '%pantip.com/activities%' or a.header.referrer_url like '%pantip.com/advertising%' then 'act-abt-ads' else 'others' end as page_type, case when regexp_replace(a.header.url,'.*(ta_cat=group)','') like '%\\%26C%' then cast(regexp_replace(regexp_replace(a.header.url,'.*(%26C)+',''),'%3D.*','') as double) else 0 end as tag_num
 	
 	from default.id_syncs a, a.header.incoming_ids b, b.sightings_by_id_type c where  partner_id in (2243) and YEAR=2016 and MONTH=11 and c.key='TAPAD_COOKIE') A );
 	
