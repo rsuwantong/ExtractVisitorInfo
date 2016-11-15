@@ -5,13 +5,14 @@
 # Input: default.id_syncs
 # Version:
 #   2016/11/11 RS: Initial version
-#   
+#   2016/11/15 RS: Additional page types, new code for tag_num
 ####################################################################################
 */
 
 select page_type, case when referrer_url like '%/forum/%' then 		
 				regexp_replace(split_part(regexp_replace(regexp_replace(regexp_replace(referrer_url,'.*forum/',''),'\\?.*',''),'\\&.*',''),'',1),'/.*','')
-			when url like '%ta_cat=group%' then regexp_replace(regexp_replace(url,'.*ta_cat=group%3D',''),'%{1}.*','') end as forum, tag_num, 
+			when url like '%ta_cat=group%' then regexp_replace(regexp_replace(url,'.*ta_cat=group%3D',''),'%{1}.*','') end as forum, 
+		tag_num, 
 		case  when referrer_url like '%/tag/%' then regexp_replace(regexp_replace(regexp_replace(referrer_url,'.*tag/',''),'[\\?\\(].*',''),'_%?$','') 
 			  when tag_num between 1 and 5 then regexp_replace(regexp_replace(url,'.*%26C1%3D',''),'%26C2.*','') 
 		end as tag1, 
@@ -20,7 +21,19 @@ select page_type, case when referrer_url like '%/forum/%' then
 	    case when tag_num between 4 and 5 then regexp_replace(regexp_replace(url,'.*%26C4%3D',''),'%26C5.*','') end as tag4, 
 	    case when tag_num =5 then regexp_replace(url,'.*%26C5%3D','') end as tag5 
 		from 
-(select a.header.url as url, case when a.header.referrer_url like '%tag%' then regexp_replace(a.header.referrer_url,'(\\(?%E0|à).*','') when a.header.referrer_url like '%topic%' then NULL else a.header.referrer_url end as referrer_url, case when a.header.referrer_url like '%tag%' then 'tag' when a.header.referrer_url like '%forum%' then 'forum' when a.header.referrer_url like '%topic%' then 'topic' when a.header.referrer_url ='http://pantip.com/' or a.header.referrer_url ='http://m.pantip.com/' then 'main' end as page_type, case when (a.header.url like '%ta_cat%' and a.header.url like '%26C%') then cast(regexp_replace(regexp_replace(a.header.url,'.*(%26C)+',''),'%3D.*','') as double) else 0 end as tag_num from default.id_syncs a, a.header.incoming_ids b, b.sightings_by_id_type c where  partner_id in (2243) and YEAR=2016 and MONTH=11 and c.key='TAPAD_COOKIE' ) A where url is not null  limit 20;
+(select a.header.url as url, case when a.header.referrer_url like '%tag%' then regexp_replace(a.header.referrer_url,'(\\(?%E0|à).*','') when a.header.referrer_url like '%topic%' then NULL else a.header.referrer_url end as referrer_url, 
+case when a.header.referrer_url like '%pantip.com/tag%' then 'tag' 
+		when a.header.referrer_url like '%pantip.com/forum%' then 'forum' 
+		when a.header.referrer_url like '%pantip.com/topic%' then 'topic' 
+		when (a.header.referrer_url ='http://pantip.com/' or a.header.referrer_url ='http://m.pantip.com/' or a.header.referrer_url like '%pantip.com/home%'
+		or a.header.referrer_url like '%pantip.com/pick%' or a.header.referrer_url like '%pantip.com/trend%' or a.header.referrer_url like '%pantip.com/ourlove%' \*Tribute to the King*\
+		) then 'home' 
+		when a.header.referrer_url like '%pantip.com/profile/%' then 'profile' 
+		when a.header.referrer_url like '%pantip.com/club%' then 'club' 
+		when a.header.referrer_url like '%pantip.com/register%' then 'register' 
+		when a.header.referrer_url like '%account%' or a.header.referrer_url like '%setting%' or a.header.referrer_url like '%login%' then 'account' 
+		when a.header.referrer_url like '%pantip.com/about%' or a.header.referrer_url like '%pantip.com/activities%' or a.header.referrer_url like '%pantip.com/advertising%' then 'act-abt-ads' else 'others' end as page_type, 
+case when regexp_replace(a.header.url,'.*(ta_cat=group)','') like '%\\%26C%' then cast(regexp_replace(regexp_replace(a.header.url,'.*(%26C)+',''),'%3D.*','') as double) else 0 end as tag_num from default.id_syncs a, a.header.incoming_ids b, b.sightings_by_id_type c where  partner_id in (2243) and YEAR=2016 and MONTH=11 and c.key='TAPAD_COOKIE' ) A where url is not null  limit 20;
 
 /*
 +-----------+--------------+---------+------+-------+------+------+------+
