@@ -104,3 +104,21 @@ select regexp_replace(cast(cast(a.header.created_at/1000 as timestamp) as string
  select offer, sum(imps), count(distinct tapad_id), sum(submits) from meas_ana.meas_table where sight_date < '2016-11-14' and sight_date >= '2016-11-01' and source ='kd' group by offer ;
  */
  
+ /*
+ +------------+--------------------------------------+-------------+-----------------+---------+---------------------------+--------+---------+-------------+------+--------+---------+----------+---------+
+| sight_date | tapad_id                             | hl_platform | dvc_techname    | carrier | offer                     | source | room_id | ful_channel | imps | clicks | selects | landings | submits |
++------------+--------------------------------------+-------------+-----------------+---------+---------------------------+--------+---------+-------------+------+--------+---------+----------+---------+
+| 2016-09-11 | c1521350-7805-11e6-b0d1-005056a23433 | ANDROID     | smart 3.5 touch | TMH     | mnp-samsung-galaxy-j2     | fb     | NULL    | NULL        | NULL | NULL   | 0       | 2        | 0       |
+| 2016-08-26 | 1cc1f3a0-6b99-11e6-a71b-005056a210c3 | ANDROID     | pulp            | TMH     | mnp-samsung-galaxy-j2     | fb     | NULL    | NULL        | NULL | NULL   | 0       | 1        | 0       |
+| 2016-09-09 | 5971f441-f884-11e5-ad98-06fe5a06de83 | ANDROID     | n5111           | TMH     | mnp-samsung-galaxy-j5     | kd     | 1       | NULL        | 6    | 1      | 0       | 1        | 0       |
+| 2016-09-14 | 8f7caef1-51ae-11e4-b627-005056a21455 | ANDROID     | iris700         | Wi-Fi   | mnp-samsung-galaxy-j2     | fb     | NULL    | NULL        | NULL | NULL   | 0       | 1        | 0       |
+| 2016-10-03 | 1ecb04a0-8996-11e6-abe6-005056a23433 | IPHONE      | iphone os 10    | Wi-Fi   | mnp-device-clearance      | fb     | NULL    | NULL        | NULL | NULL   | 0       | 1        | 0       |
+| 2016-11-23 | a0238e81-7a61-11e6-953e-005056a2566f | ANDROID     | sm-n920c        | TMH     | mnp-iphone-se             | fb     | NULL    | NULL        | NULL | NULL   | 0       | 1        | 0       |
+| 2016-11-19 | fb461eb1-24a1-11e6-ad16-0275b17dc6d7 | ANDROID     | k012            | AIS     | mnp-free-dtac-pocket-wifi | kd     | 12      | NULL        | 1    | 1      | 0       | 1        | 0       |
+| 2016-08-31 | b43faa91-654c-11e6-8ca7-005056a27a0a | ANDROID     | gt-i9200        | AIS     | mnp-samsung-galaxy-j2     | kd     | 1       | line        | 2    | 0      | 2       | 0        | 1       |
+| 2016-08-31 | b43faa91-654c-11e6-8ca7-005056a27a0a | ANDROID     | gt-i9200        | AIS     | mnp-samsung-galaxy-j2     | kd     | 13      | line        | 13   | 1      | 2       | 0        | 1       |
+| 2016-09-11 | f9cf0a12-77da-11e6-b008-005056a27d22 | ANDROID     | s930            | Wi-Fi   | mnp-samsung-galaxy-j5     | fb     | NULL    | NULL        | NULL | NULL   | 0       | 1        | 0       |
++------------+--------------------------------------+-------------+-----------------+---------+---------------------------+--------+---------+-------------+------+--------+---------+----------+---------+
+
+ */
+ 
